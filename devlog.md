@@ -1,0 +1,12 @@
+# 20/09/23
+- Basic rendering implemented
+- Need to think about editing
+  - Store tokens as a tree
+    - How?
+  - Rendered blocks turn into textarea w/ `raw` property
+  - On unfocus, run new `raw` through `lexer`
+  - Surgically update tree with new node
+  - Queue a file save
+    - Construct raw from 1-depth tree concat
+  - Track key presses (enter, bsp, arrows)
+    - Enter needs to be aware of cursor line no. in block, if enter out it needs to update DOM properly

@@ -1,2 +1,6 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import Markdown from '$lib/markdown/Markdown.svelte';
+	const string = '- wow\n\t- i love this\n';
+</script>
+
+<Markdown source={string} />
