@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { Tokens } from 'marked';
 	import { createInteractive } from '$lib/stores';
+	import type { Paragraph } from 'mdast';
 
-	export let token: Tokens.Paragraph;
+	export let token: Paragraph;
 	const { raw, editing, edit, save } = createInteractive(token);
 </script>
 

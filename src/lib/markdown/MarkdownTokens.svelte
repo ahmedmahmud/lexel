@@ -1,14 +1,12 @@
 <script lang="ts">
-  import type { Token } from 'marked'
-  import MarkdownToken from './MarkdownToken.svelte'
-  import type { Renderers } from './markedConfiguration'
+	import type {  RootContent } from 'mdast';
+	import type { Renderers } from './markedConfiguration';
+	import MarkdownToken from './MarkdownToken.svelte';
 
-  export let tokens: Token[] | null
-  export let renderers: Renderers
+	export let tokens: RootContent[];
+	export let renderers: Renderers;
 </script>
 
-{#if tokens}
-  {#each tokens as token (token)}
-    <MarkdownToken {token} {renderers} />
-  {/each}
-{/if}
+{#each tokens as token (token)}
+	<MarkdownToken {token} {renderers} />
+{/each}

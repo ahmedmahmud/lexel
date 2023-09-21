@@ -1,4 +1,5 @@
 import { tokenizer } from '$lib/lexer';
+import { fromMarkdown } from 'mdast-util-from-markdown';
 import {
 	MarkdownHeading,
 	MarkdownBloquote,
@@ -21,23 +22,18 @@ import {
 	MarkdownSpace
 } from './components';
 
-import { marked } from 'marked';
-import type { Token } from 'marked';
 import type { SvelteComponent } from 'svelte';
+import type { Nodes } from 'mdast';
 
 export function parse(src: string) {
-	marked.use({
-		gfm: true,
-		tokenizer
-	});
+	const tokens = fromMarkdown(src);
 
-	const tokens = marked.lexer(src);
 	console.debug('[Lexer output]', tokens);
 
 	return tokens;
 }
 
-export type RendererType = Token['type'] | string;
+export type RendererType = Nodes['type'] | string;
 
 // TODO: Fix this type
 export type Renderers = Record<RendererType, typeof SvelteComponent<any, any, any>>;

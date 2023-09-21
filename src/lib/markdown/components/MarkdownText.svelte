@@ -1,6 +1,7 @@
 <script lang="ts">
-  import type { Tokens } from 'marked'
-  import type { Renderers } from '../markedConfiguration'
+	import type { Text } from 'mdast';
+
+	export let token: Text;
 </script>
 
-<slot />
+{token.value}

@@ -1,11 +1,12 @@
-import type { Token } from 'marked';
+import type { Nodes, Parent, Root } from 'mdast';
 import { writable } from 'svelte/store';
 import { parse } from './markdown/markedConfiguration';
+import { toMarkdown } from 'mdast-util-to-markdown';
 
-export const tokens = writable<Token[]>([]);
+export const tokens = writable<Root>();
 
-export const createInteractive = (token: Token) => {
-	const raw = writable(token.raw);
+export const createInteractive = (token: Parent & Nodes) => {
+	const raw = writable(toMarkdown(token));
 	const editing = writable(false);
 
 	const edit = () => {
@@ -17,13 +18,13 @@ export const createInteractive = (token: Token) => {
 		console.log('save');
 		raw.update((cur) => {
 			const new_tokens = parse(cur);
-			tokens.update((ts) => {
-				const i = ts.findIndex((tk) => tk === token);
-				ts.splice(i, 1, ...new_tokens);
-				return ts;
-			});
+			// tokens.update((ts) => {
+			// 	const i = ts.findIndex((tk) => tk === token);
+			// 	ts.splice(i, 1, ...new_tokens);
+			// 	return ts;
+			// });
 			editing.set(false);
-			return new_tokens[0].raw;
+			return toMarkdown(new_tokens.children[0]);
 		});
 	};
 
