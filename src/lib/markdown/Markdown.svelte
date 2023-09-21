@@ -1,28 +1,18 @@
 <script lang="ts">
-  import type { marked, TokensList } from 'marked'
+	import type { Token } from 'marked';
 
-  import MarkdownTokens from './MarkdownTokens.svelte'
-  import {
-    defaultRenderers,
-    parse,
-    type Renderers,
-  } from './markedConfiguration'
-  import { suppressWarnings } from './suppressWarnings'
+	import MarkdownTokens from './MarkdownTokens.svelte';
+	import { defaultRenderers, type Renderers } from './markedConfiguration';
+	import { suppressWarnings } from './suppressWarnings';
 
-  suppressWarnings()
+	suppressWarnings();
 
-  /**
-   * The markdown source
-   */
-  export let source: string
+	/**
+	 * The markdown tokens
+	 */
+	export let tokens: Token[];
 
-  let tokens: TokensList
-  let actualRenderers: Renderers = defaultRenderers()
-
-  $: {
-    // May be better to split into 2
-    tokens = parse(source)
-  }
+	let actualRenderers: Renderers = defaultRenderers();
 </script>
 
 <MarkdownTokens {tokens} renderers={actualRenderers} />

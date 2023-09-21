@@ -1,3 +1,3 @@
-<p>
-  <slot />
+<p on:click>
+	<slot />
 </p>
