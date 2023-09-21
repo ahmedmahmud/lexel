@@ -8,7 +8,7 @@
 </script>
 
 {#if tokens}
-  {#each tokens as token}
+  {#each tokens as token (token)}
     <MarkdownToken {token} {renderers} />
   {/each}
 {/if}
