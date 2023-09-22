@@ -24,9 +24,14 @@ import {
 
 import type { SvelteComponent } from 'svelte';
 import type { Nodes } from 'mdast';
+import { gfm } from 'micromark-extension-gfm';
+import { gfmFromMarkdown } from 'mdast-util-gfm';
 
 export function parse(src: string) {
-	const tokens = fromMarkdown(src);
+	const tokens = fromMarkdown(src, {
+		extensions: [gfm()],
+		mdastExtensions: [gfmFromMarkdown()]
+	});
 
 	console.debug('[Lexer output]', tokens);
 
@@ -53,10 +58,12 @@ export const defaultRenderers = (): Renderers => ({
 	text: MarkdownText,
 	def: MarkdownDfn,
 	del: MarkdownDel,
-	em: MarkdownEm,
+	emphasis: MarkdownEm,
 	hr: MarkdownHr,
 	strong: MarkdownStrong,
 	image: MarkdownImage,
 	space: MarkdownSpace,
 	escape: MarkdownSpace
 });
+
+export const renderers = defaultRenderers();

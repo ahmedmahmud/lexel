@@ -14,7 +14,6 @@
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/kit": "^1.20.4",
-    "@types/log": "^6.3.1",
     "@types/mdast": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -31,8 +30,18 @@
   },
   "type": "module",
   "dependencies": {
-    "log": "^6.3.1",
+    "@codemirror/commands": "^6.2.5",
+    "@codemirror/lang-javascript": "^6.2.1",
+    "codemirror": "^6.0.1",
+    "mdast-builder": "^1.1.1",
     "mdast-util-from-markdown": "^2.0.0",
-    "mdast-util-to-markdown": "^2.1.0"
+    "mdast-util-gfm": "^3.0.0",
+    "mdast-util-newline-to-break": "^2.0.0",
+    "mdast-util-to-markdown": "^2.1.0",
+    "micromark-extension-gfm": "^3.0.0",
+    "svelte-codemirror-editor": "^1.1.0",
+    "unist-util-is": "^6.0.0",
+    "unist-util-modify-children": "^4.0.0",
+    "unist-util-parents": "^3.0.0"
   }
 }

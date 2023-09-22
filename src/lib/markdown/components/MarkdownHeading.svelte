@@ -1,16 +1,78 @@
 <script lang="ts">
-	import type { Tokens } from 'marked';
-	import { createInteractive } from '$lib/stores';
+	import { tokens } from '$lib/stores';
 	import type { Heading } from 'mdast';
+	import { gfmToMarkdown } from 'mdast-util-gfm';
+	import { toMarkdown } from 'mdast-util-to-markdown';
+	import { parse, renderers } from '../markedConfiguration';
+	import { modifyChildren } from 'unist-util-modify-children';
+	import { is } from 'unist-util-is';
 
 	export let token: Heading;
-	const { raw, editing, edit, save } = createInteractive(token);
+	$: children = token.children;
+
+	let input: HTMLElement;
+	let raw: string = toMarkdown(token, { extensions: [gfmToMarkdown()] }).trim();
+	let editing = false;
+	let selected_id = '';
+
+	$: selected_id, console.log(selected_id);
+
+	const edit = (e) => {
+		console.log('edit');
+
+		// console.log(e.target)
+		// selected_id = e.target.id
+
+		var caret = document.getSelection()?.getRangeAt(0);
+		var caretParent = caret?.commonAncestorContainer.parentNode;
+		if (caretParent && 'id' in caretParent) {
+			selected_id = caretParent.id as string;
+		}
+
+		var sel = document.getSelection()!;
+		sel.modify('extend', 'backward', 'paragraphboundary');
+		var pos = sel.toString().length;
+		if (sel.anchorNode != undefined) sel.collapseToEnd();
+		console.log('finalpos', pos);
+
+		// input.textContent = raw;
+		editing = true;
+	};
+
+	const save = () => {
+		console.log('save');
+
+		const { children } = parse(raw);
+		const [new_node] = children;
+
+		const modify = modifyChildren((node, index, parent) => {
+			if (is(node, token)) {
+				parent.children.splice(index, 1, new_node);
+				return index + 1;
+			}
+		});
+		modify($tokens);
+		$tokens = $tokens;
+
+		editing = false;
+		raw = toMarkdown(new_node, { extensions: [gfmToMarkdown()] }).trim();
+	};
 </script>
 
-{#if $editing}
-	<textarea bind:value={$raw} autofocus on:blur={save} />
-{:else}
-	<svelte:element this={`h${token.depth}`} on:click={edit}>
-		<slot />
-	</svelte:element>
-{/if}
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<svelte:element
+	this={`h${token.depth}`}
+	bind:this={input}
+	on:click={edit}
+	on:blur={save}
+	contenteditable
+>
+	{#each children as token, i (token)}
+		<svelte:component
+			this={renderers[token.type]}
+			{token}
+			id={i}
+			highlighted={i.toString() === selected_id}
+		/>
+	{/each}
+</svelte:element>

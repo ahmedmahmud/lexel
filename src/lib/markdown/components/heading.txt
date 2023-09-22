@@ -1,0 +1,39 @@
+<script lang="ts">
+	import { createInteractive } from '$lib/stores';
+	import type { Heading } from 'mdast';
+
+	export let token: Heading;
+
+	let input: HTMLElement;
+	const { raw, editing, edit, save } = createInteractive(token);
+</script>
+
+{#if $editing}
+	<svelte:element
+		this={`h${token.depth}`}
+		bind:textContent={$raw}
+		on:blur={() => save(token)}
+		contenteditable
+	>
+		{$raw}
+	</svelte:element>
+{:else}
+	<svelte:element this={`h${token.depth}`} on:click={edit} contenteditable>
+		<slot />
+	</svelte:element>
+{/if}
+
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<svelte:element
+	this={`h${token.depth}`}
+	bind:this={input}
+	on:click={() => edit(input, $raw)}
+	on:blur={() => save(token)}
+	contenteditable
+>
+	{#if $editing}
+		<!-- {$raw} -->
+{:else}
+		<slot />
+	{/if}
+</svelte:element>

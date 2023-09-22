@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { Nodes } from 'mdast';
-
 	import MarkdownTokens from './MarkdownTokens.svelte';
 	import { defaultRenderers, type Renderers } from './markedConfiguration';
 	import { suppressWarnings } from './suppressWarnings';
@@ -16,4 +14,4 @@
 	let actualRenderers: Renderers = defaultRenderers();
 </script>
 
-<MarkdownTokens tokens={tokens.children} renderers={actualRenderers} />
+<MarkdownTokens tokens={tokens.children} />
