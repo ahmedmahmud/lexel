@@ -3,12 +3,16 @@
 	import { renderers } from '../markedConfiguration';
 
 	export let token: Emphasis;
-	export let highlighted: boolean;
 	export let id: string;
+	export let cursor_offset: number;
 	$: children = token.children;
+	$: show =
+		cursor_offset >= token.position?.start.column! - 1 &&
+		cursor_offset <= token.position?.end.column! - 1;
+	$: show, console.log('yeah', cursor_offset, show);
 </script>
 
-<em id={id}>
-	{highlighted ? '*' : ''}{#each children as token (token)}
-		<svelte:component this={renderers[token.type]} {token} />{/each}{highlighted ? '*' : ''}
+<em {id}>
+	{show ? '*' : '\u200B'}{#each children as token (token)}
+		<svelte:component this={renderers[token.type]} {token} />{/each}{show ? '*' : '\u200B'}
 </em>
