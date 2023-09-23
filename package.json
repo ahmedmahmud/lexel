@@ -32,6 +32,11 @@
   "dependencies": {
     "@codemirror/commands": "^6.2.5",
     "@codemirror/lang-javascript": "^6.2.1",
+    "@codemirror/lang-markdown": "^6.2.1",
+    "@codemirror/language": "^6.9.1",
+    "@codemirror/state": "^6.2.1",
+    "@codemirror/view": "^6.20.1",
+    "@lezer/highlight": "^1.1.6",
     "codemirror": "^6.0.1",
     "mdast-builder": "^1.1.1",
     "mdast-util-from-markdown": "^2.0.0",

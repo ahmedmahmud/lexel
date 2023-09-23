@@ -13,21 +13,16 @@
 	let input: HTMLElement;
 	let raw: string = toMarkdown(token, { extensions: [gfmToMarkdown()] }).trim();
 	let editing = false;
-	// let selected_id = '';
 	let cursor_offset = 0;
 
-	const edit = (e) => {
+	const edit = () => {
 		console.log('edit');
 
 		var sel = document.getSelection()!;
 		sel.modify('extend', 'backward', 'paragraphboundary');
 		var pos = sel.toString().length;
 		if (sel.anchorNode != undefined) sel.collapseToEnd();
-		console.log('finalpos', pos);
-
-		// account for heading md
-		cursor_offset = pos + token.depth + 1;
-		console.log('wow', pos + token.depth + 1)
+		cursor_offset = pos + token.depth + 1; // account for heading md
 
 		// input.textContent = raw;
 		editing = true;
@@ -51,6 +46,47 @@
 		editing = false;
 		raw = toMarkdown(new_node, { extensions: [gfmToMarkdown()] }).trim();
 	};
+
+	const update = (e: KeyboardEvent) => {
+		switch (e.key) {
+			case 'ArrowLeft':
+			case 'ArrowRight':
+				var sel = document.getSelection()!;
+				sel.modify('extend', 'backward', 'paragraphboundary');
+				var pos = sel.toString().length;
+				if (sel.anchorNode != undefined) sel.collapseToEnd();
+				cursor_offset = pos + token.depth + 1; // account for heading md
+				break;
+
+			case 'Control':
+				var sel = document.getSelection()!;
+				sel.modify('extend', 'backward', 'paragraphboundary');
+				var pos = sel.toString().length;
+				if (sel.anchorNode != undefined) sel.collapseToEnd();
+				console.log('debug', pos)
+				e.stopPropagation()
+				e.preventDefault()
+				return false;
+
+			default:
+				break;
+		}
+	};
+
+	// const test = (e: KeyboardEvent) => {
+	// 	switch (e.key) {
+	// 		case 'ArrowLeft':
+	// 			var sel = document.getSelection()!;
+	// 			sel.modify('extend', 'backward', 'paragraphboundary');
+	// 			var pos = sel.toString().length;
+	// 			if (sel.anchorNode != undefined) sel.collapseToEnd();
+	// 			cursor_offset = pos + token.depth + 1; // account for heading md
+	// 			break;
+
+	// 		default:
+	// 			break;
+	// 	}
+	// };
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -59,14 +95,10 @@
 	bind:this={input}
 	on:click={edit}
 	on:blur={save}
+	on:keyup={update}
 	contenteditable
 >
 	{#each children as token, i (token)}
-		<svelte:component
-			this={renderers[token.type]}
-			{token}
-			id={i}
-			cursor_offset={cursor_offset}
-		/>
+		<svelte:component this={renderers[token.type]} {token} id={i} {cursor_offset} />
 	{/each}
 </svelte:element>

@@ -8,11 +8,10 @@
 	$: children = token.children;
 	$: show =
 		cursor_offset >= token.position?.start.column! - 1 &&
-		cursor_offset <= token.position?.end.column! - 1;
+		cursor_offset <= token.position?.end.column!;
 	$: show, console.log('yeah', cursor_offset, show);
 </script>
 
 <em {id}>
-	{show ? '*' : '\u200B'}{#each children as token (token)}
-		<svelte:component this={renderers[token.type]} {token} />{/each}{show ? '*' : '\u200B'}
+	{show ? '*' : 'r'}{#each children as token (token)}<svelte:component this={renderers[token.type]} {token} />{/each}{show ? '*' : 'r'}{show ? '*' : 'r'}
 </em>
