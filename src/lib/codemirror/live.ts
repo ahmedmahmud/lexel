@@ -138,7 +138,7 @@ class list_widget extends WidgetType {
 class bullet extends WidgetType {
 	toDOM(view: EditorView): HTMLElement {
 		const span = document.createElement('span');
-		span.textContent = '•';
+		span.textContent = '*';
 		return span;
 	}
 }
@@ -154,12 +154,12 @@ const lists = (view: EditorView) => {
 
         // - lorem
 				if (node.name === 'ListItem') {
-					const hide_markup = cursor_pos < node.from || cursor_pos > node.from + 1;
-					if (hide_markup) {
-						let deco = Decoration.replace({
-							widget: new bullet()
-						});
-						widgets.push(deco.range(node.from, node.from + 1));
+					// const hide_markup = cursor_pos < node.from || cursor_pos > node.from + 1;
+					if (true) {
+						// let deco = Decoration.widget({
+						// 	widget: new bullet()
+						// });
+						// widgets.push(deco.range(node.from));
 					}
 				}
 			}
