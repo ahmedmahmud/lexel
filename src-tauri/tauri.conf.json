@@ -3,7 +3,7 @@
     "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
     "devPath": "http://localhost:5173",
-    "distDir": "../static"
+    "distDir": "../build"
   },
   "package": {
     "productName": "lexel",
@@ -11,7 +11,7 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": true
     },
     "bundle": {
       "active": true,
@@ -28,7 +28,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "com.polycrylate.lexel",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
@@ -55,10 +55,11 @@
     "windows": [
       {
         "fullscreen": false,
+        "width": 800,
         "height": 600,
         "resizable": true,
         "title": "lexel",
-        "width": 800
+        "transparent": true
       }
     ]
   }

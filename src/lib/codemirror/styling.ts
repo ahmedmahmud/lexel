@@ -1,5 +1,6 @@
 import { HighlightStyle } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
+import { EditorView } from 'codemirror';
 
 export const markdownHighlighting = HighlightStyle.define([
 	{ tag: tags.heading1, fontSize: '1.6em', fontWeight: 'bold' },
@@ -23,3 +24,17 @@ export const markdownHighlighting = HighlightStyle.define([
 		fontStyle: 'italic'
 	}
 ]);
+
+export const baseStyling = EditorView.theme({
+	'.cm-line': {
+		fontFamily: 'JetBrains Mono',
+		fontSize: '1.5em'
+	}
+})
+
+export const transparentTheme = EditorView.theme({
+  '&': {
+    backgroundColor: 'transparent !important',
+    height: '100%'
+  }
+})
