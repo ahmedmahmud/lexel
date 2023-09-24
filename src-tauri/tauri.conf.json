@@ -11,7 +11,16 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "all": true,
+      "protocol": {
+        "asset": true,
+        "assetScope": [
+          "$DOCUMENT/**"
+        ]
+      }
+    },
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "bundle": {
       "active": true,
@@ -46,9 +55,6 @@
         "timestampUrl": ""
       }
     },
-    "security": {
-      "csp": null
-    },
     "updater": {
       "active": false
     },
@@ -59,7 +65,8 @@
         "height": 600,
         "resizable": true,
         "title": "lexel",
-        "transparent": true
+        "transparent": true,
+        "decorations": false
       }
     ]
   }

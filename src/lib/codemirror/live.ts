@@ -7,12 +7,15 @@ import {
 	WidgetType
 } from '@codemirror/view';
 import { syntaxTree } from '@codemirror/language';
-import type { SyntaxNode, SyntaxNodeRef } from '@lezer/common';
+import type { SyntaxNode, TreeBuffer } from '@lezer/common';
+import type { Range } from '@codemirror/state';
+import { documentDir, join } from '@tauri-apps/api/path';
+import { convertFileSrc } from '@tauri-apps/api/tauri';
 
 const hide = Decoration.replace({});
 
 const headings = (view: EditorView) => {
-	let widgets: any = [];
+	const widgets: any = [];
 	for (let { from, to } of view.visibleRanges) {
 		syntaxTree(view.state).iterate({
 			from,
@@ -152,7 +155,7 @@ const lists = (view: EditorView) => {
 			enter: (node) => {
 				const cursor_pos = view.state.selection.main.head;
 
-        // - lorem
+				// - lorem
 				if (node.name === 'ListItem') {
 					// const hide_markup = cursor_pos < node.from || cursor_pos > node.from + 1;
 					if (true) {
@@ -179,6 +182,76 @@ export const listPlugin = ViewPlugin.fromClass(
 		update(update: ViewUpdate) {
 			if (update.docChanged || update.viewportChanged || update.selectionSet)
 				this.decorations = lists(update.view);
+		}
+	},
+	{
+		decorations: (v) => v.decorations
+	}
+);
+
+class image extends WidgetType {
+	constructor(readonly from: number, readonly to: number) {
+		super();
+	}
+
+	toDOM(view: EditorView): HTMLElement {
+		const url = view.state.doc.sliceString(this.from, this.to);
+		const img = document.createElement('img');
+
+		console.log('crearing', url)
+
+		documentDir().then((path) => {
+			join(path, 'lexel/' + url).then((path) => {
+				const assetUrl = convertFileSrc(path);
+				img.src = assetUrl;
+			})
+		})
+			
+		return img;
+	}
+}
+
+const images = (view: EditorView) => {
+	const widgets: Range<Decoration>[] = [];
+	for (const { from, to } of view.visibleRanges) {
+		syntaxTree(view.state).iterate({
+			from,
+			to,
+			enter: (node) => {
+				const cursor_line = view.state.doc.lineAt(view.state.selection.main.head).number;
+				// console.log(node.)
+				// - ![lorem](ipsum)
+				if (node.name === 'Image') {
+					const image_line = view.state.doc.lineAt(node.from).number;
+					const hide_markup = cursor_line !== image_line;
+					const x = node.node.getChild('URL');
+					if (x) {
+						if (hide_markup) {
+							widgets.push(hide.range(node.from, node.to));
+						}
+						const deco = Decoration.widget({
+							widget: new image(x.from, x.to)
+						});
+						widgets.push(deco.range(node.to));
+					}
+				}
+			}
+		});
+	}
+	return Decoration.set(widgets);
+};
+
+export const imagePlugin = ViewPlugin.fromClass(
+	class {
+		decorations: DecorationSet;
+
+		constructor(view: EditorView) {
+			this.decorations = images(view);
+		}
+
+		update(update: ViewUpdate) {
+			if (update.docChanged || update.viewportChanged || update.selectionSet)
+				this.decorations = images(update.view);
 		}
 	},
 	{

@@ -4,15 +4,17 @@
 	import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 	import { markdown } from '@codemirror/lang-markdown';
 	import { syntaxHighlighting, syntaxTree } from '@codemirror/language';
-	import { headingPlugin, inlinePlugin, listPlugin } from '$lib/codemirror/live';
+	import { headingPlugin, imagePlugin, inlinePlugin, listPlugin } from '$lib/codemirror/live';
 	import { baseStyling, markdownHighlighting, transparentTheme } from '$lib/codemirror/styling';
 	import { oneDark } from '@codemirror/theme-one-dark';
+	import { md } from '$lib/stores';
 
-	export let md: string;
+	export let text: string;
+	$md = text;
 
 	let editor: HTMLElement;
 	let startState = EditorState.create({
-		doc: md,
+		doc: $md,
 		extensions: [
 			// Keymap
 			keymap.of(defaultKeymap),
@@ -23,6 +25,7 @@
 			headingPlugin,
 			inlinePlugin,
 			listPlugin,
+			imagePlugin,
 
 			// Styling
 			oneDark,
@@ -32,7 +35,7 @@
 			// highlightActiveLine(),
 
 			// App
-			EditorView.updateListener.of((update) => (md = update.state.doc.toString())),
+			EditorView.updateListener.of((update) => ($md = update.state.doc.toString())),
 			EditorView.updateListener.of((update) => {
 				if (update.docChanged) {
 					console.debug('[Tree]: ', syntaxTree(update.state));
@@ -47,6 +50,6 @@
 	});
 </script>
 
-<div class="flex-grow">
+<div class="h-full">
 	<div bind:this={editor} style="display: contents" />
 </div>
