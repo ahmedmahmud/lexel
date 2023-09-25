@@ -190,24 +190,25 @@ export const listPlugin = ViewPlugin.fromClass(
 );
 
 class image extends WidgetType {
-	constructor(readonly from: number, readonly to: number) {
+	constructor(readonly url: string) {
 		super();
 	}
 
-	toDOM(view: EditorView): HTMLElement {
-		const url = view.state.doc.sliceString(this.from, this.to);
+	eq(other: image): boolean {
+		return other.url === this.url;
+	}
+
+	toDOM(): HTMLElement {
 		const img = document.createElement('img');
 		img.className = 'object-contain';
 
-		console.log('crearing', url)
-
 		documentDir().then((path) => {
-			join(path, 'lexel/' + url).then((path) => {
+			join(path, 'lexel/' + this.url).then((path) => {
 				const assetUrl = convertFileSrc(path);
 				img.src = assetUrl;
-			})
-		})
-			
+			});
+		});
+
 		return img;
 	}
 }
@@ -231,7 +232,7 @@ const images = (view: EditorView) => {
 							widgets.push(hide.range(node.from, node.to));
 						}
 						const deco = Decoration.widget({
-							widget: new image(x.from, x.to)
+							widget: new image(view.state.doc.sliceString(x.from, x.to))
 						});
 						widgets.push(deco.range(node.to));
 					}
