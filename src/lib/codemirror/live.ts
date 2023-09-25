@@ -197,6 +197,7 @@ class image extends WidgetType {
 	toDOM(view: EditorView): HTMLElement {
 		const url = view.state.doc.sliceString(this.from, this.to);
 		const img = document.createElement('img');
+		img.className = 'object-contain';
 
 		console.log('crearing', url)
 

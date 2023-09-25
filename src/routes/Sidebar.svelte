@@ -14,7 +14,7 @@
 	}
 </script>
 
-<div class="w-52 h-full flex flex-col gap-4 overflow-hidden">
+<div class="w-52 h-full flex flex-col gap-4">
 	<div class="bg-black/10 p-2 rounded h-full flex flex-col justify-between">
 		<div class="flex flex-col gap-2">
 			{#each fs as file}

@@ -32,6 +32,7 @@
 			transparentTheme,
 			baseStyling,
 			syntaxHighlighting(markdownHighlighting),
+			EditorView.lineWrapping,
 			// highlightActiveLine(),
 
 			// App
