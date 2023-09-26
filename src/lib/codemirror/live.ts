@@ -201,9 +201,12 @@ class image extends WidgetType {
 	toDOM(): HTMLElement {
 		const img = document.createElement('img');
 		img.className = 'object-contain';
-
+		
 		documentDir().then((path) => {
 			join(path, 'lexel/' + this.url).then((path) => {
+				path = path.replaceAll('%20', ' ');
+
+				console.log(path, "SHEHEHUE")
 				const assetUrl = convertFileSrc(path);
 				img.src = assetUrl;
 			});
