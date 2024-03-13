@@ -1,4 +1,4 @@
-# lexel-electron
+# lexel
 
 An Electron application with Solid and TypeScript
 

@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: lexel-electron
+productName: lexel
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: lexel-electron
+  executableName: lexel
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
