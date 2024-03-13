@@ -4,7 +4,7 @@
 use std::{fs, path::PathBuf};
 use tauri::Manager;
 use walkdir::WalkDir;
-use window_vibrancy::{apply_mica, NSVisualEffectMaterial};
+use window_vibrancy::{apply_mica, apply_vibrancy, NSVisualEffectMaterial};
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {

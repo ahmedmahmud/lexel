@@ -4,16 +4,17 @@
 	import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 	import { markdown } from '@codemirror/lang-markdown';
 	import { syntaxHighlighting, syntaxTree } from '@codemirror/language';
-	import { headingPlugin, imagePlugin, inlinePlugin, listPlugin } from '$lib/codemirror/live';
+	import { headingPlugin, inlinePlugin, listPlugin } from '$lib/codemirror/live';
 	import { baseStyling, markdownHighlighting, transparentTheme } from '$lib/codemirror/styling';
 	import { oneDark } from '@codemirror/theme-one-dark';
 	import { md } from '$lib/stores';
 	import { writeBinaryFile, BaseDirectory, exists } from '@tauri-apps/api/fs';
+	import { imageStateField } from '$lib/codemirror/image';
 
 	export let text: string;
 	$md = text;
 
-	async function fileExists(path) {
+	async function fileExists(path: string) {
 		try {
 			return await exists(path, { dir: BaseDirectory.Document });
 		} catch (e) {
@@ -34,7 +35,7 @@
 			headingPlugin,
 			inlinePlugin,
 			listPlugin,
-			imagePlugin,
+			imageStateField,
 
 			// Styling
 			oneDark,

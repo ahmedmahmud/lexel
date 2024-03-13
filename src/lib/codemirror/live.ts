@@ -7,10 +7,7 @@ import {
 	WidgetType
 } from '@codemirror/view';
 import { syntaxTree } from '@codemirror/language';
-import type { SyntaxNode, TreeBuffer } from '@lezer/common';
-import type { Range } from '@codemirror/state';
-import { documentDir, join } from '@tauri-apps/api/path';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import type { SyntaxNode } from '@lezer/common';
 
 const hide = Decoration.replace({});
 
@@ -159,10 +156,10 @@ const lists = (view: EditorView) => {
 				if (node.name === 'ListItem') {
 					// const hide_markup = cursor_pos < node.from || cursor_pos > node.from + 1;
 					if (true) {
-						// let deco = Decoration.widget({
-						// 	widget: new bullet()
-						// });
-						// widgets.push(deco.range(node.from));
+						let deco = Decoration.widget({
+							widget: new bullet()
+						});
+						widgets.push(deco.range(node.from));
 					}
 				}
 			}
@@ -182,81 +179,6 @@ export const listPlugin = ViewPlugin.fromClass(
 		update(update: ViewUpdate) {
 			if (update.docChanged || update.viewportChanged || update.selectionSet)
 				this.decorations = lists(update.view);
-		}
-	},
-	{
-		decorations: (v) => v.decorations
-	}
-);
-
-class image extends WidgetType {
-	constructor(readonly url: string) {
-		super();
-	}
-
-	eq(other: image): boolean {
-		return other.url === this.url;
-	}
-
-	toDOM(): HTMLElement {
-		const img = document.createElement('img');
-		img.className = 'object-contain';
-		
-		documentDir().then((path) => {
-			join(path, 'lexel/' + this.url).then((path) => {
-				path = path.replaceAll('%20', ' ');
-
-				console.log(path, "SHEHEHUE")
-				const assetUrl = convertFileSrc(path);
-				img.src = assetUrl;
-			});
-		});
-
-		return img;
-	}
-}
-
-const images = (view: EditorView) => {
-	const widgets: Range<Decoration>[] = [];
-	for (const { from, to } of view.visibleRanges) {
-		syntaxTree(view.state).iterate({
-			from,
-			to,
-			enter: (node) => {
-				const cursor_line = view.state.doc.lineAt(view.state.selection.main.head).number;
-				// console.log(node.)
-				// - ![lorem](ipsum)
-				if (node.name === 'Image') {
-					const image_line = view.state.doc.lineAt(node.from).number;
-					const hide_markup = cursor_line !== image_line;
-					const x = node.node.getChild('URL');
-					if (x) {
-						if (hide_markup) {
-							widgets.push(hide.range(node.from, node.to));
-						}
-						const deco = Decoration.widget({
-							widget: new image(view.state.doc.sliceString(x.from, x.to))
-						});
-						widgets.push(deco.range(node.to));
-					}
-				}
-			}
-		});
-	}
-	return Decoration.set(widgets);
-};
-
-export const imagePlugin = ViewPlugin.fromClass(
-	class {
-		decorations: DecorationSet;
-
-		constructor(view: EditorView) {
-			this.decorations = images(view);
-		}
-
-		update(update: ViewUpdate) {
-			if (update.docChanged || update.viewportChanged || update.selectionSet)
-				this.decorations = images(update.view);
 		}
 	},
 	{

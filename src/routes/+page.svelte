@@ -1,7 +1,12 @@
 <script lang="ts">
 	import '../app.css';
-	import 'uno.css';
-	import '@unocss/reset/tailwind.css';
+	
+	// import 'uno.css';
+	// import '@unocss/reset/tailwind.css';
+	onMount(async () => {
+		await import('uno.css');
+		await import('@unocss/reset/tailwind.css');
+	});
 
 	import Editor from './Editor.svelte';
 	import Sidebar from './Sidebar.svelte';
@@ -10,6 +15,7 @@
 
 	import { documentDir, join } from '@tauri-apps/api/path';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
 	let open: File | null = null;

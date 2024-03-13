@@ -28,7 +28,8 @@ export const markdownHighlighting = HighlightStyle.define([
 export const baseStyling = EditorView.theme({
 	'.cm-line': {
 		fontFamily: 'JetBrains Mono',
-		fontSize: '1.2em'
+		fontSize: '1.2em',
+		padding: '0px'
 	}
 })
 

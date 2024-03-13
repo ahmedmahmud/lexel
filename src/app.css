@@ -1,13 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
+.block {
+	display: block;
+}
+
+.inline {
+	display: inline;
+}
+
 code {
 	font-family: 'JetBrains Mono', Courier, monospace;
 }
 
-.cm-editor.cm-focused { outline: none }
+.cm-editor.cm-focused {
+	outline: none;
+}
 .cm-editor {
-	height: 100%
+	height: 100%;
 }
 
-.cm-wrap { height: 100% }
-.cm-scroller { overflow: auto }
+.cm-line {
+	padding: 0;
+}
+
+.cm-wrap {
+	height: 100%;
+}
+.cm-scroller {
+	overflow: auto;
+}
+
+/* .cm-img-container {
+	display: 'block';
+	width: 100%;
+	text-align: 'center';
+}
+
+.cm-img {
+	display: 'block';
+	margin: '0 auto 0';
+	max-height: '24em';
+	padding: '0 1em 0';
+} */

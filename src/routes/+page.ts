@@ -7,10 +7,10 @@ export interface File {
 }
 
 export const load: PageLoad = async () => {
-	const files: File[] = await invoke('get_files');
+	// const files: File[] = await invoke('get_files');
 	// const image: string = await invoke('read_image', { path: 'singleframe.png' });
 	// console.log('wowow ', image)
 	return {
-		fs: files,
+		fs: [],
 	};
 };
