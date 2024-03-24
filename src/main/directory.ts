@@ -34,9 +34,10 @@ function from_value(value: Root): Result<Root> {
   return { ok: true, value }
 }
 
-export function start() {
+export function start(): Root {
   const notes_dir = os.homedir() + '/documents/lexel'
   let root: Root = scanDirectory(notes_dir, '')
+  return root;
 }
 
 function scanDirectory(full_path: string, relative_path: string, parent?: Branch): Branch {
