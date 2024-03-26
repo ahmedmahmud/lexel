@@ -1,5 +1,10 @@
 <script context="module" lang="ts">
-  import { BeakerIcon, ChevronRightIcon, ChevronDownIcon, ArrowLeftIcon } from '@krowten/svelte-heroicons';
+  import {
+    BeakerIcon,
+    ChevronRightIcon,
+    ChevronDownIcon,
+    ArrowLeftIcon
+  } from '@krowten/svelte-heroicons'
   type Icon = 'svelte' | 'folder' | 'js'
 
   export type TreeItem = {
@@ -13,16 +18,17 @@
     folder: ChevronRightIcon,
     folderOpen: ChevronDownIcon,
     js: BeakerIcon,
-    highlight: ArrowLeftIcon,
+    highlight: ArrowLeftIcon
   }
 </script>
 
 <script lang="ts">
   import { melt, type TreeView } from '@melt-ui/svelte'
   import { getContext } from 'svelte'
-  import { draggable, dropzone } from '../lib/dnd';
+  import { draggable } from '../lib/dnd2'
+  import type { BaseNode } from '../lib/fs'
 
-  export let treeItems: TreeItem[]
+  export let treeItems: BaseNode[]
   export let level = 1
 
   const {
@@ -31,37 +37,39 @@
   } = getContext<TreeView>('tree')
 </script>
 
-{#each treeItems as { title, icon, children }, i}
-  {@const itemId = `${title}-${i}`}
-  {@const hasChildren = !!children?.length}
+{#each treeItems as node}
+  {@const itemId = node.relative_path}
+  {@const folder = node.type === 'folder'}
+  {@const hasChildren = node.type === 'folder' && !!node.children.length}
 
-  <li class={level !== 1 ? 'pl-4' : ''} use:dropzone={{}}>
+  <li class={level !== 1 ? 'pl-4' : ''} use:draggable={node}>
     <button
       class="flex items-center gap-1 rounded-md p-1 focus:bg-magnum-200"
       use:melt={$item({
         id: itemId,
         hasChildren
       })}
-      use:draggable={itemId}
     >
-      <!-- Add icon. -->
-      {#if icon === 'folder' && hasChildren && $isExpanded(itemId)}
+      <!-- Icon -->
+      {#if folder && $isExpanded(itemId)}
         <svelte:component this={icons['folderOpen']} class="h-4 w-4" />
+      {:else if folder}
+        <svelte:component this={icons['folder']} class="h-4 w-4" />
       {:else}
-        <svelte:component this={icons[icon]} class="h-4 w-4" />
+        <!-- <svelte:component this={icons[folder.extension]} class="h-4 w-4" /> -->
       {/if}
 
-      <span class="select-none">{title}</span>
+      <span class="select-none">{node.name}</span>
 
-      <!-- Selected icon. -->
+      <!-- Selected icon -->
       {#if $isSelected(itemId)}
         <svelte:component this={icons['highlight']} class="h-4 w-4" />
       {/if}
     </button>
 
-    {#if children}
+    {#if node.type === 'folder' && hasChildren}
       <ul use:melt={$group({ id: itemId })}>
-        <svelte:self treeItems={children} level={level + 1} />
+        <svelte:self treeItems={node.children} level={level + 1} />
       </ul>
     {/if}
   </li>

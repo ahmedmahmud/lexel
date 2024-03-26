@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
-import { start } from './directory'
+import { handleMove, start } from './directory'
 
 function createWindow(): void {
   // Create the browser window.
@@ -57,6 +57,8 @@ app.whenReady().then(() => {
   ipcMain.handle('get_folders', async () => {
     return start()
   })
+
+  ipcMain.handle('move_node', handleMove);
 
   createWindow()
 

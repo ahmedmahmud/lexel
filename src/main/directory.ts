@@ -1,6 +1,7 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 import os from 'os'
 import path from 'path'
+import { get, set } from './store'
 
 type FSNode = Branch | Leaf
 
@@ -26,8 +27,8 @@ type Branch = {
 
 type Root = Branch
 
-type Result<T> = { ok: true; value: T } | { ok: false; error: number }
-function from_err(err: error_codes): Result<Root> {
+type Result<T> = { ok: true; value: T } | { ok: false; error: Error }
+function from_err(err: Error): Result<Root> {
   return { ok: false, error: err }
 }
 function from_value(value: Root): Result<Root> {
@@ -36,8 +37,9 @@ function from_value(value: Root): Result<Root> {
 
 export function start(): Root {
   const notes_dir = os.homedir() + '/documents/lexel'
+  set('base', notes_dir)
   let root: Root = scanDirectory(notes_dir, '')
-  return root;
+  return root
 }
 
 function scanDirectory(full_path: string, relative_path: string, parent?: Branch): Branch {
@@ -123,117 +125,18 @@ function inject_children(node: Branch, children: FSNode[]): Branch {
   return node
 }
 
-/**
- * Find a node in the tree given a path by walking through its path segments
- * @param root
- * @param path
- * @returns
- */
+/* Handlers */
+export async function handleMove(_event: Electron.Event, from: string, to: string, name: string) {
+  const base = get('base')
+  const from_abs = path.join(base, from)
+  const to_abs = path.join(base, to, name)
 
-function find_node(current: FSNode, relative_path: string): FSNode | undefined {
-  // Reached the end of the path
-  if (relative_path === '' || relative_path === '.') {
-    return current
+  try {
+    await fs.move(from_abs, to_abs)
+    const new_root = scanDirectory(base, '', undefined)
+    return from_value(new_root)
+  } catch (err: any) {
+    console.error('move failed', err)
+    return from_err(err)
   }
-
-  // If the current node is a file, we can't go any further
-  if (current.type === 'file') {
-    return undefined
-  }
-
-  const segments = relative_path.split('/')
-  const next_segment = segments[0]
-  const remaining_path = path.join(...segments.slice(1))
-  const next = current.children.find((child) => child.name === next_segment)
-  if (next) {
-    return find_node(next, remaining_path)
-  }
-  return undefined
-}
-
-function create_file(root: Root, to_path: string, name: string): Result<Root> {
-  const parent = find_node(root, to_path)
-
-  if (!parent) {
-    return from_err(error_codes.TO_NOT_FOUND)
-  }
-
-  if (parent.type !== 'folder') {
-    return from_err(error_codes.TO_NOT_FOLDER)
-  }
-
-  const full_path = path.join(parent.path, name)
-  const relative_path = path.join(parent.relative_path, name)
-  if (fs.existsSync(full_path)) {
-    return from_err(error_codes.ALREADY_EXISTS)
-  }
-
-  fs.writeFileSync(full_path, '')
-  const leaf = create_leaf(full_path, relative_path, parent)
-  parent.children.push(leaf)
-  parent.leaf_count += leaf.leaf_count
-
-  return from_value(root)
-}
-
-function rename_node(root: Root, old_path: string, new_path: string, base: string): Result<Root> {
-  if (old_path === '.' || old_path === '' || new_path === '.' || new_path === '') {
-    return from_err(error_codes.MOVE_ROOT)
-  }
-
-  const node = find_node(root, old_path)
-  if (!node) {
-    return from_err(error_codes.FROM_NOT_FOUND)
-  }
-
-  const new_path_full = path.join(base, new_path)
-  const parent_path_full = path.dirname(new_path_full)
-
-  if (old_path === new_path) {
-    return from_value(root)
-  }
-
-  if (fs.existsSync(new_path_full)) {
-    return from_err(error_codes.ALREADY_EXISTS)
-  }
-
-  fs.mkdirSync(parent_path_full, { recursive: true })
-  fs.renameSync(node.path, new_path_full)
-
-  const new_root = scanDirectory(base, '', undefined)
-
-  return from_value(new_root)
-}
-
-function create_folder(root: Root, to_path: string, name: string): Result<Root> {
-  const parent = find_node(root, to_path)
-
-  if (!parent) {
-    return from_err(error_codes.TO_NOT_FOUND)
-  }
-
-  if (parent.type !== 'folder') {
-    return from_err(error_codes.TO_NOT_FOLDER)
-  }
-
-  const full_path = path.join(parent.path, name)
-  const relative_path = path.join(parent.relative_path, name)
-  if (fs.existsSync(full_path)) {
-    return from_err(error_codes.ALREADY_EXISTS)
-  }
-
-  fs.mkdirSync(full_path)
-  const folder = create_directory_node(full_path, relative_path, parent)
-  parent.children.push(folder)
-
-  return from_value(root)
-}
-
-enum error_codes {
-  NONE,
-  FROM_NOT_FOUND,
-  TO_NOT_FOUND,
-  TO_NOT_FOLDER,
-  ALREADY_EXISTS,
-  MOVE_ROOT
 }
