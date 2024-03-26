@@ -27,17 +27,19 @@ export function draggable(el: HTMLElement, data_: BaseNode) {
   }
 
   function handleMouseDown(e) {
+    // caused issues with button dragging
     // on safari clicking on a select element doesn't fire mouseup at the end of the click and in general this makes more sense
-    if (
-      e.target !== e.currentTarget &&
-      (e.target.value !== undefined || e.target.isContentEditable)
-    ) {
-      return
-    }
+    // if (
+    //   e.target !== e.currentTarget &&
+    //   (e.target.value !== undefined || e.target.isContentEditable)
+    // ) {
+    //   return
+    // }
     // prevents responding to any button but left click which equals 0 (which is falsy)
     if (e.button) {
       return
     }
+
     if (state.dragging) {
       return
     }
@@ -158,7 +160,6 @@ export function draggable(el: HTMLElement, data_: BaseNode) {
     e.stopPropagation()
     if (!isDescendant(data, state.dragNode)) {
       dndStore.update((state) => ({ ...state, dropElement: e.currentTarget, dropNode: data }))
-      el.classList.add('bg-red-400/20')
     }
   }
 
@@ -175,7 +176,6 @@ export function draggable(el: HTMLElement, data_: BaseNode) {
         }
         return state
       })
-      el.classList.remove('bg-red-400/20')
     }
   }
 
@@ -187,7 +187,6 @@ export function draggable(el: HTMLElement, data_: BaseNode) {
     } else {
       el.removeEventListener('mouseover', handleMouseEnter)
       el.removeEventListener('mouseout', handleMouseLeave)
-      el.classList.remove('bg-red-400/20')
     }
   })
 
@@ -213,8 +212,8 @@ export function draggable(el: HTMLElement, data_: BaseNode) {
 
 export function basezone(el: HTMLElement, data: BaseNode) {
   let child = el.children[0] as HTMLElement
-  let held: number;
-  let state: DndState;
+  let held: number
+  let state: DndState
 
   function handleMouseEnter(e) {
     if (data.type === 'file') return
@@ -231,8 +230,6 @@ export function basezone(el: HTMLElement, data: BaseNode) {
     e.stopPropagation()
     if (!isDescendant(data, state.dragNode)) {
       dndStore.update((state) => ({ ...state, dropElement: e.currentTarget, dropNode: data }))
-      child.classList.add('bg-red-400/20')
-      console.log(child, child.classList)
     }
   }
 
@@ -249,7 +246,6 @@ export function basezone(el: HTMLElement, data: BaseNode) {
         }
         return state
       })
-      child.classList.remove('bg-red-400/20')
     }
   }
 
@@ -261,7 +257,6 @@ export function basezone(el: HTMLElement, data: BaseNode) {
     } else {
       el.removeEventListener('mouseover', handleMouseEnter)
       el.removeEventListener('mouseout', handleMouseLeave)
-      child.classList.remove('bg-red-400/20')
     }
   })
 
