@@ -20,6 +20,11 @@ export type FileNode = {
   extension: string
 }
 
+const shownExtensions = new Set([
+  '.md',
+  '.png'
+])
+
 export function isDescendant(child: BaseNode, ancestor: BaseNode) {
   if (ancestor.type === 'file') return false
   let parent = child
@@ -30,4 +35,9 @@ export function isDescendant(child: BaseNode, ancestor: BaseNode) {
     parent = parent.parent
   }
   return false
+}
+
+export function isShown(node: BaseNode) {
+  if (node.type === 'folder') return true
+  return shownExtensions.has(node.extension)
 }

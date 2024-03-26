@@ -5,6 +5,7 @@
   import Tree from './tree.svelte'
   import type { BaseNode } from '../lib/fs'
   import { dndStore, expandedStore, treeStore } from '../lib/stores'
+  import { basezone, draggable } from '../lib/dnd'
 
   const ctx = createTreeView({
     expanded: expandedStore,
@@ -23,11 +24,16 @@
 </script>
 
 <div
-  class="flex h-[18.75rem] w-[18.75rem] flex-col rounded-xl bg-white text-neutral-900 md:h-[350px]"
+  class="h-lvh flex flex-col rounded-xl bg-white text-neutral-900"
 >
   {#if $treeStore && $treeStore.type === 'folder'}
-    <ul class="px-4 pb-4 pt-2" {...$tree}>
-      <Tree treeItems={$treeStore.children} />
+    <ul class="h-full px-4 pb-4 pt-2" {...$tree}>
+      <div class="h-full l-lvh" use:basezone={$treeStore}>
+        <div use:draggable={$treeStore}>
+          Notes
+          <Tree treeItems={$treeStore.children} />
+        </div>
+      </div>
     </ul>
   {/if}
 </div>
